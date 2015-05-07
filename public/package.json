@@ -1,0 +1,23 @@
+{
+  "name": "news",
+  "version": "0.0.0",
+  "description": "Create posts, add comments and votes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mean"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/javigonz/MEAN_News.git"
+  },
+  "author": "javier gonzalez",
+  "license": "MIT",
+  "dependencies": {
+    "angular": "~1.3.10",
+    "angular-ui-router": "~0.2.10",
+    "bootstrap": "~3.2.0"
+  }
+}
