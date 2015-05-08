@@ -10,10 +10,7 @@ var Comment = mongoose.model('Comment');
 
 
 ////////MIDDLEWARE
-// create application/json parser
 var jsonParser = bodyParser.json()
-
-// create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 
@@ -37,9 +34,10 @@ router.get('/posts/:post', function(req, res) {
 });
 
 
-router.post('/posts', urlencodedParser, function(req, res) {
-  var post = new Post(req.query);
-  console.log('Req.body: ', req.query);
+router.post('/posts', jsonParser, function(req, res) {
+  var post = new Post(req.body);
+  //console.log('INSERCIÓN Req.query: ', req.query);
+  //console.log('INSERCIÓN Req.body: ', req.body);
 
   post.save(function(err, post){
     if(err){ return next(err); }

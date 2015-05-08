@@ -29,20 +29,31 @@ app.factory('posts', [ '$http', '$q',
   function($http,$q){
 
     var o = {};
-    o.getAll = function()
-    {
+
+    o.getAll = function(){
         var deferred = $q.defer();
         $http.get('/posts')
             .success(function(response) {
                 deferred.resolve(response);
-                console.log(response);
-
             })
             .error(function(error){
                 console.error('The async call has fail');
             });
         return deferred.promise;
     }
+
+    o.createPost = function(post) {
+      var deferred = $q.defer();
+      $http.post('/posts', post)
+          .success(function(response) {
+              deferred.resolve(response);
+          })
+          .error(function(error){
+              console.error('The async call has fail');
+          });
+      return deferred.promise;
+    };
+
     return o;
   }
 
@@ -57,7 +68,6 @@ app.controller('MainCtrl', ['$scope', '$stateParams', 'posts',
 
     posts.getAll()
       .then(function(result){
-        console.log('Resultado Then:',result);
         $scope.posts = result;
       })
       .catch (function(err){
@@ -71,17 +81,19 @@ app.controller('MainCtrl', ['$scope', '$stateParams', 'posts',
       if (!$scope.title || $scope.title === '') {    //Not empty field is permitted
         return;
       }
-      $scope.posts.push({
+      posts.createPost({
         title: $scope.title,
         link: $scope.link,
-        upvotes: 0,
-        comments: [
-          {author: 'Joe', body: 'Cool post!', upvotes: 0},
-          {author: 'Bob', body: 'Great idea but everything is wrong!', upvotes: 0}
-        ]
-      });
-      $scope.title = '';
-      $scope.link = '';
+      })
+        .then(function(result){
+        //  console.log('Resultado Then:',result);
+          $scope.posts.push(result);
+          $scope.title = '';
+          $scope.link = '';
+        })
+        .catch (function(err){
+          console.log('The async call has fail');
+        })
     };
 
     $scope.incrementUpvotes = function(post){
