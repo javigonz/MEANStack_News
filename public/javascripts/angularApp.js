@@ -10,7 +10,8 @@ app.config(['$stateProvider', '$urlRouterProvider',
       .state('home',{
           url:         '/home',
           templateUrl: '/home.html',
-          controller: 'MainCtrl'
+          controller: 'MainCtrl',
+
       })
       .state('posts',{
           url:         '/posts/{id}',
@@ -23,44 +24,30 @@ app.config(['$stateProvider', '$urlRouterProvider',
 ]);
 
 /////////////////////////////////////////////SERVICES
-app.factory('posts', [
+app.factory('posts', [ '$http', '$q',
 
-  function(){
+  function($http,$q){
 
-    var o = {
-      posts: [
-        {id: 0, title: 'post 1', link: 'htp://www.google.com', upvotes: 5,
-        comments: [
-          {author: 'Joe', body: 'Cool post!', upvotes: 0},
-          {author: 'Bob', body: 'Great idea but everything is wrong!', upvotes: 0}
-        ]},
-        {id: 1, title: 'post 2', link: 'htp://www.google.com', upvotes: 2,
-        comments: [
-          {author: 'Joe', body: 'Cool post!', upvotes: 0},
-          {author: 'Bob', body: 'Great idea but everything is wrong!', upvotes: 0}
-        ]},
-        {id: 2, title: 'post 3', link: 'htp://www.google.com', upvotes: 15,
-        comments: [
-          {author: 'Joe', body: 'Cool post!', upvotes: 0},
-          {author: 'Bob', body: 'Great idea but everything is wrong!', upvotes: 0}
-        ]},
-        {id: 3, title: 'post 4', link: 'htp://www.google.com', upvotes: 9,
-        comments: [
-          {author: 'Joe', body: 'Cool post!', upvotes: 0},
-          {author: 'Bob', body: 'Great idea but everything is wrong!', upvotes: 0}
-        ]},
-        {id: 4, title: 'post 5', link: 'htp://www.google.com', upvotes: 4,
-        comments: [
-          {author: 'Joe', body: 'Cool post!', upvotes: 0},
-          {author: 'Bob', body: 'Great idea but everything is wrong!', upvotes: 0}
-        ]}
-      ]
-    };
+    var o = {};
+    o.getAll = function()
+    {
+        var deferred = $q.defer();
+        $http.get('/posts')
+            .success(function(response) {
+                deferred.resolve(response);
+                console.log(response);
 
+            })
+            .error(function(error){
+                console.error('The async call has fail');
+            });
+        return deferred.promise;
+    }
     return o;
   }
 
 ]);
+
 
 
 /////////////////////////////////////////////CONTROLLERS
@@ -68,7 +55,17 @@ app.controller('MainCtrl', ['$scope', '$stateParams', 'posts',
 
   function($scope, $stateParams, posts){
 
-    $scope.posts = posts.posts;
+    posts.getAll()
+      .then(function(result){
+        console.log('Resultado Then:',result);
+        $scope.posts = result;
+      })
+      .catch (function(err){
+        console.log('The async call has fail');
+      })
+
+
+
 
     $scope.addPost = function(){
       if (!$scope.title || $scope.title === '') {    //Not empty field is permitted
