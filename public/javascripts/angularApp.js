@@ -42,6 +42,7 @@ app.factory('posts', [ '$http', '$q',
         return deferred.promise;
     }
 
+
     o.createPost = function(post) {
       var deferred = $q.defer();
       $http.post('/posts', post)
@@ -52,6 +53,20 @@ app.factory('posts', [ '$http', '$q',
               console.error('The async call has fail');
           });
       return deferred.promise;
+    }
+
+
+    o.upvote = function(post) {
+      var deferred = $q.defer();
+      $http.put('/posts/' + post._id + '/upvote')
+        .success(function(response) {
+            post.upvotes += 1;
+            deferred.resolve(response);
+        })
+        .error(function(error){
+            console.error('The async call has fail');
+        });
+    return deferred.promise;
     };
 
     return o;
@@ -75,8 +90,6 @@ app.controller('MainCtrl', ['$scope', '$stateParams', 'posts',
       })
 
 
-
-
     $scope.addPost = function(){
       if (!$scope.title || $scope.title === '') {    //Not empty field is permitted
         return;
@@ -86,7 +99,6 @@ app.controller('MainCtrl', ['$scope', '$stateParams', 'posts',
         link: $scope.link,
       })
         .then(function(result){
-        //  console.log('Resultado Then:',result);
           $scope.posts.push(result);
           $scope.title = '';
           $scope.link = '';
@@ -97,7 +109,13 @@ app.controller('MainCtrl', ['$scope', '$stateParams', 'posts',
     };
 
     $scope.incrementUpvotes = function(post){
-      post.upvotes += 1;
+      posts.upvote(post)
+        .then(function(result){
+          $scope.post = result;
+        })
+        .catch (function(err){
+          console.log('The async call has fail');
+        })
     };
   }
 
