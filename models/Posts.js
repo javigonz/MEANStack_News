@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+require('./Users');
 
 var PostSchema = new mongoose.Schema({
   title: String,

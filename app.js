@@ -5,13 +5,17 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var passport = require('passport');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var posts = require('./models/Posts');
 var comments = require('./models/Comments');
+var comments = require('./models/Comments');
+
 
 var app = express();
+app.use(passport.initialize());
 
 //Connect to Mongo database
 mongoose.connect('mongodb://localhost/news');

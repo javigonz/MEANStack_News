@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+require('./Users');
 
 var CommentSchema = new mongoose.Schema({
   body: String,
