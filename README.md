@@ -24,3 +24,5 @@ $ npm start
 
 
 The local application run in http://localhost:3000/
+
+Based in http://www.mybridge.co/view/149
